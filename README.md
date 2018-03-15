@@ -9,56 +9,56 @@ Zabbix template for monitoring [PHP-FPM](http://php.net/manual/en/install.fpm.ph
 
 ## Installation
 
-1. Copy `php-fpm.sh` to the scripts directory.
+Copy `php-fpm.sh` to the scripts directory.
 
-    ```
-    cp php-fpm.sh /etc/zabbix/scripts
-    chmod 750 /etc/zabbix/scripts/php-fpm.sh
-    chown zabbix:zabbix /etc/zabbix/scripts/php-fpm.sh
-    ```
+```
+cp php-fpm.sh /etc/zabbix/scripts
+chmod 750 /etc/zabbix/scripts/php-fpm.sh
+chown zabbix:zabbix /etc/zabbix/scripts/php-fpm.sh
+```
 
-2. Include `php-fpm.conf` to the Zabbix agent configuration file.
+Include `php-fpm.conf` to the Zabbix agent configuration file.
 
-    ```
-    cp php-fpm.conf /etc/zabbix/zabbix-agentd.d/
-    ```
+```
+cp php-fpm.conf /etc/zabbix/zabbix-agentd.d/
+```
 
-    Ensure, that your `zabbix-agent.conf` contains `Include` directive. Otherwise you have to paste the content to the end of file.
+Ensure, that your `zabbix-agent.conf` contains `Include` directive. Otherwise you have to paste the content to the end of file.
 
-3. Enable PHP-FPM status page.
+Enable PHP-FPM status page.
 
-    ```
-    [www]
-    user = nobody
-    group = nobody
-    listen = 127.0.0.1:9000
-    pm = dynamic
-    pm.status_path = /php-fpm-status
-    [...]
-    ```
+```
+[www]
+user = nobody
+group = nobody
+listen = 127.0.0.1:9000
+pm = dynamic
+pm.status_path = /php-fpm-status
+[...]
+```
 
-4. Set up NGINX as a reverse proxy to allow Zabbix grab PHP-FPM status page.
+Set up NGINX as a reverse proxy to allow Zabbix grab PHP-FPM status page.
 
-    ```
-    server {
-        listen 80 default_server;
+```
+server {
+    listen 80 default_server;
 
-	server_name _;
-	
-	access_log off;
-	error_log off;
+    server_name _;
 
-	location / {}
+    access_log off;
+    error_log off;
 
-	location /php-fpm-status {
-	    allow 127.0.0.1/32;
-            deny all;
-            fastcgi_pass 127.0.0.1:9000;
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-            include fastcgi_params;
-        }
+    location / {}
+
+    location /php-fpm-status {
+        allow 127.0.0.1/32;
+        deny all;
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
     }
-    ```
+}
+```
 
 
 Done. Now you can import `zbx_php-fpm.xml` file to the Zabbix.
