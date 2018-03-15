@@ -23,8 +23,6 @@ Include `php-fpm.conf` to the Zabbix agent configuration file.
 cp php-fpm.conf /etc/zabbix/zabbix-agentd.d/
 ```
 
-Ensure, that your `zabbix-agent.conf` contains `Include` directive. Otherwise you have to paste the content to the end of file.
-
 Enable PHP-FPM status page.
 
 ```
